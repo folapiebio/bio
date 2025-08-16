@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solaris Bio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #1a3a5f;
+            --secondary: #0a1a2a;
+            --accent: #70c8ff;
+            --accent-dark: #4a6fa5;
+            --text: #ffffff;
+            --text-secondary: rgba(200, 220, 255, 0.8);
+            --card-bg: rgba(30, 35, 50, 0.6);
+            --item-bg: rgba(40, 50, 80, 0.3);
+            --item-hover: rgba(50, 70, 120, 0.4);
+            --donate-gradient: linear-gradient(90deg, #ff6b6b, #ff8e53);
+        }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a2a, #1a1a3e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text);
+            padding: 20px;
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+        
+        .bio-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 
+                0 16px 40px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        
+        .bio-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(100, 180, 255, 0.15) 0%, transparent 60%);
+            animation: rotate 40s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transform: translateZ(30px);
+        }
+        
+        .avatar i {
+            font-size: 60px;
+            color: rgba(255, 255, 255, 0.9);
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .title {
+            font-size: 3.2rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+            letter-spacing: -1px;
+            text-shadow: 0 0 20px rgba(100, 180, 255, 0.3);
+            transform: translateZ(20px);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            transform: translateZ(15px);
+        }
+        
+        .bio-section {
+            margin-bottom: 30px;
+            transform: translateZ(10px);
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+        }
+        
+        .info-item {
+            display: flex;
+            margin-bottom: 18px;
+            padding: 15px;
+            background: var(--item-bg);
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            transform: translateZ(5px);
+        }
+        
+        .info-item:hover {
+            background: var(--item-hover);
+            transform: translateY(-3px) translateZ(10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .info-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(100, 150, 255, 0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .info-icon i {
+            font-size: 24px;
+            color: var(--accent);
+        }
+        
+        .info-content {
+            flex: 1;
+        }
+        
+        .info-label {
+            font-size: 1rem;
+            color: rgba(180, 220, 255, 0.8);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .social-link {
+            color: var(--accent);
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .social-link:hover {
+            color: #a0e0ff;
+            text-shadow: 0 0 10px rgba(100, 180, 255, 0.3);
+        }
+        
+        .social-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), #a0e0ff);
+            transition: width 0.3s ease;
+        }
+        
+        .social-link:hover::after {
+            width: 100%;
+        }
+        
+        .donate-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: var(--donate-gradient);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            box-shadow: 0 6px 15px rgba(255, 107, 107, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            transform: translateZ(10px);
+        }
+        
+        .donate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff8e53, #ff6b6b);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .donate-btn:hover {
+            transform: translateY(-3px) translateZ(15px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.4);
+        }
+        
+        .donate-btn:hover::before {
+            opacity: 1;
+        }
+        
+        .donate-btn i {
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+            transform: translateZ(5px);
+        }
+        
+        .social-badge {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: var(--item-bg);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .social-badge:hover {
+            background: var(--item-hover);
+            transform: translateY(-3px) translateZ(10px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(100, 150, 255, 0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .social-icon i {
+            font-size: 20px;
+            color: var(--accent);
+        }
+        
+        .social-info {
+            flex: 1;
+        }
+        
+        .social-label {
+            font-size: 0.9rem;
+            color: rgba(180, 220, 255, 0.8);
+        }
+        
+        .social-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .space-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: float linear infinite;
+        }
+        
+        @keyframes float {
+            to {
+                transform: translateY(-100vh) translateX(20px);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .bio-card {
+                padding: 30px 20px;
+            }
+            
+            .title {
+                font-size: 2.6rem;
+            }
+            
+            .avatar {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .avatar i {
+                font-size: 50px;
+            }
+            
+            .info-item {
+                padding: 12px;
+            }
+            
+            .info-icon {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .info-icon i {
+                font-size: 20px;
+            }
+            
+            .info-value {
+                font-size: 1.1rem;
+            }
+            
+            .social-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="space-particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="bio-card">
+            <div class="header">
+                <div class="avatar">
+                    <i class="fas fa-user-astronaut"></i>
+                </div>
+                <h1 class="title">Solaris</h1>
+                <p class="subtitle">Digital Explorer</p>
+            </div>
+            
+            <div class="bio-section">
+                <h2 class="section-title"><i class="fas fa-user"></i> Основная информация</h2>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-signature"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Nickname</div>
+                        <div class="info-value">Solaris</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-birthday-cake"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Age</div>
+                        <div class="info-value">13</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bio-section">
+                <h2 class="section-title"><i class="fas fa-share-alt"></i> Социальные сети</h2>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fab fa-tiktok"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">TikTok</div>
+                        <div class="info-value">
+                            <a href="https://tiktok.com/@folapie.com" class="social-link" target="_blank">@folapie.com</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fab fa-telegram"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Telegram Channel</div>
+                        <div class="info-value">
+                            <a href="https://t.me/fkcsoc" class="social-link" target="_blank">@fkcsoc</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Telegram Contact</div>
+                        <div class="info-value">
+                            <a href="https://t.me/folapie" class="social-link" target="_blank">@folapie</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bio-section">
+                <h2 class="section-title"><i class="fas fa-gamepad"></i> Увлечения</h2>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Favorite Activity</div>
+                        <div class="info-value">Playing Minecraft</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="social-grid">
+                <div class="social-badge">
+                    <div class="social-icon">
+                        <i class="fab fa-discord"></i>
+                    </div>
+                    <div class="social-info">
+                        <div class="social-label">Discord</div>
+                        <div class="social-value">folapie_61201</div>
+                    </div>
+                </div>
+                
+                <div class="social-badge">
+                    <div class="social-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <div class="social-info">
+                        <div class="social-label">GitHub</div>
+                        <div class="social-value">folapies</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="donate-btn" onclick="window.location.href='https://www.donationalerts.com/r/folapie'">
+                <i class="fas fa-gift"></i> Поддержать
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Оптимизированное создание частиц
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 40;
+            const sizes = [2, 3, 4];
+            const speeds = [20, 30, 40];
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = sizes[Math.floor(Math.random() * sizes.length)];
+                const speed = speeds[Math.floor(Math.random() * speeds.length)];
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.opacity = Math.random() * 0.5 + 0.3;
+                particle.style.animationDuration = `${speed}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // Плавная анимация появления элементов
+        function animateItems() {
+            const items = document.querySelectorAll('.info-item, .social-badge, .donate-btn');
+            items.forEach((item, i) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px) scale(0.95)';
+                setTimeout(() => {
+                    item.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0) scale(1)';
+                }, i * 100 + 300);
+            });
+        }
+        
+        // Параллакс эффект
+        function setupParallax() {
+            const card = document.querySelector('.bio-card');
+            
+            document.addEventListener('mousemove', (e) => {
+                const x = (e.clientX / window.innerWidth - 0.5) * 10;
+                const y = (e.clientY / window.innerHeight - 0.5) * 10;
+                
+                card.style.transform = `rotateX(${y}deg) rotateY(${x}deg)`;
+            });
+            
+            document.addEventListener('mouseleave', () => {
+                card.style.transform = 'rotateX(0) rotateY(0)';
+            });
+        }
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            animateItems();
+            setupParallax();
+        });
+    </script>
+</body>
+</html>
